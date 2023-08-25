@@ -4,10 +4,10 @@ const helmet = require("helmet");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
+dotenv.config();
+
 const authRoutes = require("./routes/authRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
-
-dotenv.config();
 
 const app = express();
 const port = 3000;
