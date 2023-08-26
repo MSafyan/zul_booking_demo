@@ -13,6 +13,7 @@
  *       properties:
  *         id:
  *           type: integer
+ *           readOnly: true
  *           description: The auto-generated ID of the booking
  *         title:
  *           type: string
@@ -55,19 +56,19 @@
 
 /**
  * @swagger
- * tags:
- *   name: Bookings
- *   description: All about /booking
- */
-
-/**
- * @swagger
- * /booking:
- *   post:
- *     summary: Create a new booking
+ * /booking/{bookingId}/uploadImage:
+ *   put:
+ *     summary: Upload cover image for a booking
  *     tags: [Bookings]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: bookingId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The ID of the booking.
  *     requestBody:
  *       required: true
  *       content:
@@ -84,6 +85,46 @@
  *           encoding:
  *             coverImage:
  *               contentType: image/png, image/jpeg
+ *     responses:
+ *       200:
+ *         description: Image successfully uploaded and associated with the booking.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Some fields are missing or invalid.
+ *       404:
+ *         description: Booking not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingNotFound'
+ *       500:
+ *         description: Some error happened.
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Bookings
+ *   description: All about /booking
+ */
+
+/**
+ * @swagger
+ * /booking:
+ *   post:
+ *     summary: Create a new booking
+ *     tags: [Bookings]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
  *         application/json:
  *           schema:
  *             type: object
@@ -179,19 +220,6 @@
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               coverImage:
- *                 type: string
- *                 format: binary
- *                 description: The cover image for the booking.
- *             required:
- *               - coverImage
- *           encoding:
- *             coverImage:
- *               contentType: image/png, image/jpeg
  *         application/json:
  *           schema:
  *             type: object
@@ -207,7 +235,8 @@
  *               price:
  *                 type: number
  *               location:
- *                 type: string
+
+*                 type: string
  *               coverImage:
  *                 type: string
  *             required:

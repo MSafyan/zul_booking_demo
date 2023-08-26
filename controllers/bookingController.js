@@ -8,15 +8,36 @@ function handleAffectedRows(affectedRows, res, successMsg, notFoundMsg) {
   res.send(successMsg);
 }
 
-exports.createBooking = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+exports.uploadBookingImage = async (req, res) => {
+  const bookingId = req.params.bookingId;
+  const coverImage = req.file ? req.file.location : null;
+  const userId = req.user.userId;
+
+  if (!coverImage) {
+    return res.status(400).send("No image provided.");
   }
 
-  const { title, description, startDate, endDate, price, location } = req.body;
+  try {
+    const booking = await Booking.findOne({
+      where: { id: bookingId, userId: userId },
+    });
 
-  const coverImage = req.file ? req.file.location : null;
+    if (booking) {
+      booking.coverImage = coverImage;
+      await booking.save();
+      res
+        .status(200)
+        .send({ message: "Image uploaded successfully.", booking });
+    } else {
+      res.status(404).send({ message: "Not Found or unauthorized." });
+    }
+  } catch (error) {
+    res.status(500).send("Error uploading image.");
+  }
+};
+
+exports.createBooking = async (req, res) => {
+  const { title, description, startDate, endDate, price, location } = req.body;
 
   try {
     const booking = await Booking.create({
@@ -26,7 +47,6 @@ exports.createBooking = async (req, res) => {
       endDate,
       price,
       location,
-      coverImage,
       userId: req.user.userId,
     });
     res.status(201).send(booking);
@@ -57,6 +77,10 @@ exports.getUserBookings = async (req, res) => {
 
 exports.updateBooking = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     const { id } = req.params;
 
     const coverImage = req.file ? req.file.location : undefined;
@@ -93,7 +117,7 @@ exports.deleteBooking = async (req, res) => {
       deletedRows,
       res,
       "Booking deleted.",
-      "Booking not found or not deleted."
+      "Booking not found or unauthorized."
     );
   } catch (error) {
     res.status(500).send("Error deleting booking.");
