@@ -29,7 +29,14 @@ router.post(
     )
       .not()
       .isEmpty()
-      .isISO8601(),
+      .isISO8601()
+      .custom((startDate, { req }) => {
+        const endDate = req.body.endDate;
+        if (endDate && new Date(startDate) >= new Date(endDate)) {
+          throw new Error("Start date cannot be after end date.");
+        }
+        return true;
+      }),
     body(
       "endDate",
       "End date is required and should be in ISO8601 format (e.g., YYYY-MM-DDTHH:mm:ssZ)."
@@ -73,6 +80,52 @@ router.get("/user", protect, bookingController.getUserBookings);
 router.put(
   "/:id",
   protect,
+  [
+    body("title", "Title is required.")
+      .optional()
+      .not()
+      .isEmpty()
+      .isString()
+      .trim()
+      .isLength({ min: 1, max: 255 }),
+    body("description").optional().isString().trim().isLength({ max: 1000 }),
+    body(
+      "startDate",
+      "Start date is required and should be in ISO8601 format (e.g., YYYY-MM-DDTHH:mm:ssZ)."
+    )
+      .optional()
+      .not()
+      .isEmpty()
+      .isISO8601()
+      .custom((startDate, { req }) => {
+        const endDate = req.body.endDate;
+        if (endDate && new Date(startDate) >= new Date(endDate)) {
+          throw new Error("Start date cannot be after end date.");
+        }
+        return true;
+      }),
+    body(
+      "endDate",
+      "End date is required and should be in ISO8601 format (e.g., YYYY-MM-DDTHH:mm:ssZ)."
+    )
+      .optional()
+      .not()
+      .isEmpty()
+      .isISO8601(),
+    body("price", "Price is required and should be a valid number.")
+      .optional()
+      .not()
+      .isEmpty()
+      .toFloat()
+      .isFloat({
+        min: 0,
+      }),
+    body("location", "Location is required.")
+      .optional()
+      .isString()
+      .trim()
+      .isLength({ min: 1, max: 255 }),
+  ],
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
