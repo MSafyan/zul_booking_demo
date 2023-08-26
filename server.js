@@ -16,7 +16,18 @@ const port = process.env.PORT || 3000;
 
 app.use(helmet());
 
-app.use(cors());
+const corsOptions = {
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:3000/api-docs",
+    "http://Zulbookingdemo-env.eba-qj2dpymm.us-west-1.elasticbeanstalk.com",
+  ],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -48,6 +59,9 @@ const options = {
       {
         url: "http://localhost:3000",
       },
+      {
+        url: "http://Zulbookingdemo-env.eba-qj2dpymm.us-west-1.elasticbeanstalk.com ",
+      },
     ],
   },
   apis: ["./doc/*.js"], // files containing annotations as above
@@ -64,7 +78,7 @@ app.use("/booking", bookingRoutes);
 app.get("/", async (req, res) => {
   try {
     res.send(
-      `Hello Mate, thanks for visiting (y)our application. I hope you will enjoy the journey.`
+      `Hello Mate, thanks for visiting (y)our application. I hope you will enjoy the journey.<br> Please visit <a href='/api-docs'>Swagger docs</a> for more details.`
     );
   } catch (error) {
     console.error("Error querying the database", error);

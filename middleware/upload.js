@@ -9,8 +9,6 @@ const s3 = new AWS.S3({
   endpoint: `s3.us-west-1.amazonaws.com`,
 });
 
-console.log(process.env.PG_HOST + "console");
-
 const upload = multer({
   storage: multerS3({
     s3: s3,
