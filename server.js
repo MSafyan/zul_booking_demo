@@ -19,8 +19,7 @@ app.use(helmet());
 const corsOptions = {
   origin: [
     "http://localhost:3000",
-    "http://localhost:3000/api-docs",
-    "http://Zulbookingdemo-env.eba-qj2dpymm.us-west-1.elasticbeanstalk.com",
+    "https://zuldemobooking-4ed96b23ea56.herokuapp.com",
   ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
