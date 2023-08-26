@@ -59,7 +59,7 @@ const options = {
         url: "http://localhost:3000",
       },
       {
-        url: "http://Zulbookingdemo-env.eba-qj2dpymm.us-west-1.elasticbeanstalk.com ",
+        url: "https://zuldemobooking-4ed96b23ea56.herokuapp.com",
       },
     ],
   },
