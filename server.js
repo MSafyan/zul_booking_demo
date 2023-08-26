@@ -10,7 +10,7 @@ const authRoutes = require("./routes/authRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Middlewares
 
