@@ -235,9 +235,6 @@
  *               price:
  *                 type: number
  *               location:
-
-*                 type: string
- *               coverImage:
  *                 type: string
  *             required:
  *               - title

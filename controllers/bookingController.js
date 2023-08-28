@@ -77,19 +77,9 @@ exports.getUserBookings = async (req, res) => {
 
 exports.updateBooking = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
     const { id } = req.params;
 
-    const coverImage = req.file ? req.file.location : undefined;
-
-    const { id: _, ...updateData } = req.body;
-
-    if (coverImage) {
-      updateData.coverImage = coverImage;
-    }
+    const { id: _, coverImage, userId, ...updateData } = req.body;
 
     const [updatedRows] = await Booking.update(updateData, {
       where: { id, userId: req.user.userId },
